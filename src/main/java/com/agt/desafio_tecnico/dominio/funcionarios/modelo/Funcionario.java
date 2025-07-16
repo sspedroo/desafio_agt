@@ -25,10 +25,12 @@ public class Funcionario {
     private String cnh;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
+    private boolean ativo;
 
     @PrePersist
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
+        this.ativo = true;
     }
 
     @PreUpdate
