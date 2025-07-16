@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface FuncionarioRepositorio extends JpaRepository<Funcionario, UUID> {
 
+    boolean existsByCnh(String cnh);
 }
