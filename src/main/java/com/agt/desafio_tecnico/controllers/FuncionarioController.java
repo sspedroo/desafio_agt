@@ -18,6 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/funcionarios")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Tag(name = "Funcionários", description = "Endpoints para gerenciamento de funcionários")
 public class FuncionarioController {
     private final FuncionarioService funcionarioService;
