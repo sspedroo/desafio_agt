@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -77,5 +78,13 @@ public class RegistroViagemServico {
         veiculoRepositorio.save(veiculo);
 
         return VisualizarRegistroViagemDTO.fromEntity(registroViagem);
+    }
+
+    @Transactional
+    public List<VisualizarRegistroViagemDTO> listarRegistrosViagensComFiltros() {
+        List<RegistroViagem> registrosViagens = registroViagemRepositorio.findAll();
+        return registrosViagens.stream()
+                .map(VisualizarRegistroViagemDTO::fromEntity)
+                .toList();
     }
 }
