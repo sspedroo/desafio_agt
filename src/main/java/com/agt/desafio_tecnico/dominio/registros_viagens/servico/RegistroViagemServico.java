@@ -18,7 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -45,7 +48,7 @@ public class RegistroViagemServico {
         RegistroViagem registroViagem = RegistroViagem.builder()
                 .veiculo(veiculo)
                 .funcionarioMotorista(funcionario)
-                .dataSaida(dto.dataSaida())
+                .dataSaida(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))
                 .destino(dto.destino())
                 .passageiros(dto.passageiros())
                 .build();
@@ -70,7 +73,7 @@ public class RegistroViagemServico {
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Registro de viagem com status ABERTO não encontrado para o veículo de " +
                         "placa: " + dto.placaVeiculo()));
 
-        registroViagem.setDataRetorno(LocalDate.now());
+        registroViagem.setDataRetorno(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
         registroViagem.setStatus(RegistroViagemStatus.FINALIZADO);
         veiculo.setStatus(VeiculoStatus.NO_PATIO);
 

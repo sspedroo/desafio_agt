@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/viagens")
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class RegistroViagensController {
     @GetMapping("/registros")
     @Operation(summary = "Listar registros de viagens",
                description = "Lista todos os registros de viagens com a opção de aplicar filtros.")
-    public ResponseEntity<?> listarRegistrosViagens(
+    public ResponseEntity<List<VisualizarRegistroViagemDTO>> listarRegistrosViagens(
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String placaVeiculo,
             @RequestParam(required = false) String dataSaida,

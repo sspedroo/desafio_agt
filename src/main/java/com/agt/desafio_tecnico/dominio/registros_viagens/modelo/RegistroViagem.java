@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +31,8 @@ public class RegistroViagem {
     @JoinColumn(name = "funcionario_motorista_id", nullable = false)
     private Funcionario funcionarioMotorista;
     @Column(nullable = false)
-    private LocalDate dataSaida;
-    private LocalDate dataRetorno;
+    private LocalDateTime dataSaida;
+    private LocalDateTime dataRetorno;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegistroViagemStatus status;
@@ -44,13 +45,13 @@ public class RegistroViagem {
 
     @PrePersist
     public void prePersist() {
-        this.criadoEm = LocalDateTime.now();
+        this.criadoEm = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
         this.dataRetorno = null;
         this.status = RegistroViagemStatus.ABERTO;
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.atualizadoEm = LocalDateTime.now();
+        this.atualizadoEm = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
     }
 }

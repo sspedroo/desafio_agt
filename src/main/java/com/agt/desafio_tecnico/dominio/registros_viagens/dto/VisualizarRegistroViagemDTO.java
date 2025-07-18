@@ -6,7 +6,6 @@ import com.agt.desafio_tecnico.dominio.registros_viagens.modelo.RegistroViagem;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.VisualizarVeiculoDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -16,10 +15,10 @@ public record VisualizarRegistroViagemDTO (
         VisualizarVeiculoDTO veiculo,
         VisualizarFuncionarioDTO motorista,
         String destino,
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        LocalDate dataSaida,
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        LocalDate dataRetorno,
+        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+        LocalDateTime dataSaida,
+        @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
+        LocalDateTime dataRetorno,
         List<String> passageiros,
         RegistroViagemStatus status,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")

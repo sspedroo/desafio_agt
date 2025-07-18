@@ -15,11 +15,6 @@ public record CriarViagemDTO(
         String placaVeiculo,
         @NotNull(message = "O ID do funcionário motorista não pode ser nulo")
         UUID funcionarioMotoristaId,
-        @NotNull(message = "A data de saída não pode ser nula")
-        @PastOrPresent(message = "A data de saída não pode ser no futuro")
-        @JsonFormat(pattern = "dd/MM/yyyy")
-        @Schema(defaultValue = "16/07/2025", description = "Data de saída no formato dd/MM/yyyy")
-        LocalDate dataSaida,
         @NotBlank(message = "O destino não pode estar em branco")
         @Schema(defaultValue = "Maracai")
         String destino,
