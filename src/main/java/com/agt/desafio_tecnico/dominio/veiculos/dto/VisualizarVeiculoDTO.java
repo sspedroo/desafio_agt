@@ -1,6 +1,6 @@
 package com.agt.desafio_tecnico.dominio.veiculos.dto;
 
-import com.agt.desafio_tecnico.dominio.veiculos.enums.CarroStatus;
+import com.agt.desafio_tecnico.dominio.veiculos.enums.VeiculoStatus;
 import com.agt.desafio_tecnico.dominio.veiculos.modelo.Veiculo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -11,7 +11,7 @@ public record VisualizarVeiculoDTO (
         UUID id,
         String placa,
         String modelo,
-        CarroStatus status,
+        VeiculoStatus status,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime criadoEm,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")

@@ -1,7 +1,7 @@
 package com.agt.desafio_tecnico.dominio.veiculos.modelo;
 
 import com.agt.desafio_tecnico.dominio.veiculos.dto.AtualizarVeiculoDTO;
-import com.agt.desafio_tecnico.dominio.veiculos.enums.CarroStatus;
+import com.agt.desafio_tecnico.dominio.veiculos.enums.VeiculoStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -30,14 +30,14 @@ public class Veiculo {
     private String modelo;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private CarroStatus status;
+    private VeiculoStatus status;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
 
     @PrePersist
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
-        this.status = CarroStatus.NO_PATIO; // Define o status como DISPONÍVEL ao criar
+        this.status = VeiculoStatus.NO_PATIO; // Define o status como DISPONÍVEL ao criar
     }
 
     @PreUpdate

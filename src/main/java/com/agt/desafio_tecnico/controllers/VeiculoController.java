@@ -4,7 +4,7 @@ package com.agt.desafio_tecnico.controllers;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.AtualizarVeiculoDTO;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.CriarVeiculoDTO;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.VisualizarVeiculoDTO;
-import com.agt.desafio_tecnico.dominio.veiculos.enums.CarroStatus;
+import com.agt.desafio_tecnico.dominio.veiculos.enums.VeiculoStatus;
 import com.agt.desafio_tecnico.dominio.veiculos.servico.VeiculoServico;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,6 +23,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/veiculos")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 @Tag(name = "Veículo", description = "Endpoints de Gerenciamento de veículos")
 public class VeiculoController {
     private final VeiculoServico veiculoServico;
@@ -56,7 +57,7 @@ public class VeiculoController {
 
     @GetMapping
     @Operation(summary = "Listar Veículos", description = "Lista todos os veículos com filtros opcionais.")
-    public ResponseEntity<Page<VisualizarVeiculoDTO>> listarVeiculos(@RequestParam(required=false) CarroStatus status,
+    public ResponseEntity<Page<VisualizarVeiculoDTO>> listarVeiculos(@RequestParam(required=false) VeiculoStatus status,
                                                                      @RequestParam(required=false) String placa,
                                                                      @RequestParam(required=false) String modelo,
                                                                      @PageableDefault(page = 0, size = 10, sort = "criadoEm",

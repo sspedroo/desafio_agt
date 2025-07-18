@@ -3,7 +3,7 @@ package com.agt.desafio_tecnico.dominio.veiculos.servico;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.AtualizarVeiculoDTO;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.CriarVeiculoDTO;
 import com.agt.desafio_tecnico.dominio.veiculos.dto.VisualizarVeiculoDTO;
-import com.agt.desafio_tecnico.dominio.veiculos.enums.CarroStatus;
+import com.agt.desafio_tecnico.dominio.veiculos.enums.VeiculoStatus;
 import com.agt.desafio_tecnico.dominio.veiculos.modelo.Veiculo;
 import com.agt.desafio_tecnico.dominio.veiculos.repositorio.VeiculoRepositorio;
 import com.agt.desafio_tecnico.excecoes.ConflitoDeDadosException;
@@ -66,7 +66,7 @@ public class VeiculoServico {
     }
 
     @Transactional(readOnly = true)
-    public Page<VisualizarVeiculoDTO> listarVeiculos(CarroStatus status, String placa, String modelo, Pageable pageable) {
+    public Page<VisualizarVeiculoDTO> listarVeiculos(VeiculoStatus status, String placa, String modelo, Pageable pageable) {
         Page<Veiculo> veiculos = veiculoRepositorio.findByFilters(status, placa, modelo, pageable);
 
         return veiculos.map(VisualizarVeiculoDTO::fromEntity);
