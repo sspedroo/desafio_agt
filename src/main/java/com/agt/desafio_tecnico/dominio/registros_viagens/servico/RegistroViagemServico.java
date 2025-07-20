@@ -17,6 +17,7 @@ import com.agt.desafio_tecnico.excecoes.RecursoNaoEncontradoException;
 import com.agt.desafio_tecnico.excecoes.VeiculoJaEstaEmViagemException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,7 @@ public class RegistroViagemServico {
     private final List<RetornoViagemValidacao> validacoesDeRetornoDeRegistroViagem;
 
     @Transactional
+    @CacheEvict(value = "listaDeVeiculos", allEntries = true) // Invalida TODAS as entradas do cache
     public VisualizarRegistroViagemDTO registrarInicioViagem(CriarViagemDTO dto) {
         Veiculo veiculo = veiculoRepositorio.findByPlaca(dto.placaVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado com a placa: " + dto.placaVeiculo()));
@@ -64,6 +66,7 @@ public class RegistroViagemServico {
     }
 
     @Transactional
+    @CacheEvict(value = "listaDeVeiculos", allEntries = true) // Invalida TODAS as entradas do cache
     public VisualizarRegistroViagemDTO registrarFimViagem(RegistrarFimViagemDTO dto) {
         Veiculo veiculo = veiculoRepositorio.findByPlaca(dto.placaVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado com a placa: " + dto.placaVeiculo()));

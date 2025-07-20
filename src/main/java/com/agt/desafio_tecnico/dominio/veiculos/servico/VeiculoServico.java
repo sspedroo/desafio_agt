@@ -10,11 +10,13 @@ import com.agt.desafio_tecnico.excecoes.ConflitoDeDadosException;
 import com.agt.desafio_tecnico.excecoes.RecursoNaoEncontradoException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,6 +26,7 @@ public class VeiculoServico {
     private final VeiculoRepositorio veiculoRepositorio;
 
     @Transactional
+    @CacheEvict(value = "listaDeVeiculos", allEntries = true) // Invalida TODAS as entradas do cache
     public VisualizarVeiculoDTO criarVeiculo(CriarVeiculoDTO dto) {
 
         if (veiculoRepositorio.existsByPlaca(dto.placa())) {
@@ -41,6 +44,7 @@ public class VeiculoServico {
     }
 
     @Transactional
+    @CacheEvict(value = "listaDeVeiculos", allEntries = true) // Invalida TODAS as entradas do cache
     public VisualizarVeiculoDTO atualizarVeiculo(UUID id, AtualizarVeiculoDTO dto) {
         Veiculo veiculo = veiculoRepositorio.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado com o ID: " + id));
@@ -66,13 +70,23 @@ public class VeiculoServico {
     }
 
     @Transactional(readOnly = true)
-    public Page<VisualizarVeiculoDTO> listarVeiculos(VeiculoStatus status, String placa, String modelo, Pageable pageable) {
-        Page<Veiculo> veiculos = veiculoRepositorio.findByFilters(status, placa, modelo, pageable);
+    @Cacheable(
+            value = "listaDeVeiculos",
+            key = "(#status?.toString() ?: 'NULL_STATUS') + '_' + " + // Converte para string ou 'NULL_STATUS'
+                    "(#placa ?: 'NULL_PLACA') + '_' + " +                 // Converte para string ou 'NULL_PLACA'
+                    "(#modelo ?: 'NULL_MODELO')"                          // Converte para string ou 'NULL_MODELO'
+    )
+    public List<VisualizarVeiculoDTO> listarVeiculos(VeiculoStatus status, String placa, String modelo) {
+        List<Veiculo> veiculos = veiculoRepositorio.findByFilters(status, placa, modelo);
 
-        return veiculos.map(VisualizarVeiculoDTO::fromEntity);
+        return veiculos.stream()
+                .sorted(Comparator.comparing(Veiculo::getCriadoEm).reversed())
+                .map(VisualizarVeiculoDTO::fromEntity)
+                .toList();
     }
 
     @Transactional
+    @CacheEvict(value = "listaDeVeiculos", allEntries = true) // Invalida TODAS as entradas do cache
     public void excluirVeiculo(UUID id) {
         if (!veiculoRepositorio.existsById(id)) {
             throw new RecursoNaoEncontradoException("Veículo não encontrado com o ID: " + id);

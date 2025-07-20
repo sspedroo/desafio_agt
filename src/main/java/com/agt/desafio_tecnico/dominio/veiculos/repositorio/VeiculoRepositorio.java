@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,10 +23,9 @@ public interface VeiculoRepositorio extends JpaRepository<Veiculo, UUID> {
            AND (:placa IS NULL OR v.placa = :placa)
            AND (:modelo IS NULL OR v.modelo = :modelo)
            """)
-    Page<Veiculo> findByFilters(@Param("status") VeiculoStatus status,
+    List<Veiculo> findByFilters(@Param("status") VeiculoStatus status,
                                 @Param("placa") String placa,
-                                @Param("modelo") String modelo,
-                                Pageable pageable);
+                                @Param("modelo") String modelo);
 
 
     boolean existsByPlaca(String placa);

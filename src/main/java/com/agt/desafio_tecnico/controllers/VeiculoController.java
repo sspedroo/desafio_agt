@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -57,13 +58,12 @@ public class VeiculoController {
 
     @GetMapping
     @Operation(summary = "Listar Veículos", description = "Lista todos os veículos com filtros opcionais.")
-    public ResponseEntity<Page<VisualizarVeiculoDTO>> listarVeiculos(@RequestParam(required=false) VeiculoStatus status,
+    public ResponseEntity<List<VisualizarVeiculoDTO>> listarVeiculos(@RequestParam(required=false) VeiculoStatus status,
                                                                      @RequestParam(required=false) String placa,
-                                                                     @RequestParam(required=false) String modelo,
-                                                                     @PageableDefault(page = 0, size = 10, sort = "criadoEm",
-                                                                             direction = Sort.Direction.DESC) Pageable pageable) {
+                                                                     @RequestParam(required=false) String modelo
+                                                                     ) {
 
-        Page<VisualizarVeiculoDTO> visualizarVeiculoDTOS = veiculoServico.listarVeiculos(status, placa, modelo, pageable);
+        List<VisualizarVeiculoDTO> visualizarVeiculoDTOS = veiculoServico.listarVeiculos(status, placa, modelo);
 
         return ResponseEntity.ok(visualizarVeiculoDTOS);
     }
