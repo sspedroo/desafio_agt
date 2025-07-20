@@ -38,8 +38,7 @@ public class RegistroViagem {
     private RegistroViagemStatus status;
     @Column(nullable = false)
     private String destino;
-    @Column(nullable = false)
-    private List<String> passageiros;
+    private String passageiros;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
 

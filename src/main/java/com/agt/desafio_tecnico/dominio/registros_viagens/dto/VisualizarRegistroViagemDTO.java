@@ -19,7 +19,7 @@ public record VisualizarRegistroViagemDTO (
         LocalDateTime dataSaida,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime dataRetorno,
-        List<String> passageiros,
+        String passageiros,
         RegistroViagemStatus status,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime criadoEm,
