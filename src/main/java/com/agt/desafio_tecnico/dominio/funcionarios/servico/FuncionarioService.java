@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,6 +68,7 @@ public class FuncionarioService {
     public List<VisualizarFuncionarioDTO> listarFuncionarios() {
         List<Funcionario> funcionarios = funcionarioRepositorio.findAll();
         return funcionarios.stream()
+                .sorted(Comparator.comparing(Funcionario::getCriadoEm).reversed())
                 .map(VisualizarFuncionarioDTO::fromEntity)
                 .toList();
     }
