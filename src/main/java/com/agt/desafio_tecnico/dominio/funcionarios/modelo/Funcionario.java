@@ -31,12 +31,12 @@ public class Funcionario {
     private String cnh;
     private LocalDateTime criadoEm;
     private LocalDateTime atualizadoEm;
-    private boolean ativo;
+    private boolean emViagem;
 
     @PrePersist
     public void prePersist() {
         this.criadoEm = LocalDateTime.now();
-        this.ativo = true;
+        this.emViagem = false;
     }
 
     @PreUpdate
