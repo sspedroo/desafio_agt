@@ -8,6 +8,8 @@ import com.agt.desafio_tecnico.dominio.registros_viagens.dto.VisualizarRegistroV
 import com.agt.desafio_tecnico.dominio.registros_viagens.enums.RegistroViagemStatus;
 import com.agt.desafio_tecnico.dominio.registros_viagens.modelo.RegistroViagem;
 import com.agt.desafio_tecnico.dominio.registros_viagens.repositorio.RegistroViagemRepositorio;
+import com.agt.desafio_tecnico.dominio.registros_viagens.validacao.InicioViagemValidacao;
+import com.agt.desafio_tecnico.dominio.registros_viagens.validacao.RetornoViagemValidacao;
 import com.agt.desafio_tecnico.dominio.veiculos.enums.VeiculoStatus;
 import com.agt.desafio_tecnico.dominio.veiculos.modelo.Veiculo;
 import com.agt.desafio_tecnico.dominio.veiculos.repositorio.VeiculoRepositorio;
@@ -18,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -31,6 +31,8 @@ public class RegistroViagemServico {
     private final RegistroViagemRepositorio registroViagemRepositorio;
     private final VeiculoRepositorio veiculoRepositorio;
     private final FuncionarioRepositorio funcionarioRepositorio;
+    private final List<InicioViagemValidacao> validacoesDeInicioDeRegistroViagem;
+    private final List<RetornoViagemValidacao> validacoesDeRetornoDeRegistroViagem;
 
     @Transactional
     public VisualizarRegistroViagemDTO registrarInicioViagem(CriarViagemDTO dto) {
@@ -39,12 +41,13 @@ public class RegistroViagemServico {
         Funcionario funcionario = funcionarioRepositorio.findById(dto.funcionarioMotoristaId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Funcionário não encontrado com o ID: " + dto.funcionarioMotoristaId()));
 
-        if (!veiculo.getStatus().equals(VeiculoStatus.NO_PATIO)) {
-            throw new VeiculoJaEstaEmViagemException("Não é possível iniciar uma viagem com o veículo de placa " + dto.placaVeiculo() + " pois" +
-                    " o status do veículo é " + veiculo.getStatus() + ". O veículo deve estar no pátio para iniciar uma viagem.");
+        // Validações de início de registro de viagem
+        for (InicioViagemValidacao validator : validacoesDeInicioDeRegistroViagem) {
+            validator.validate(veiculo, funcionario, dto);
         }
 
         veiculo.setStatus(VeiculoStatus.EM_VIAGEM);
+        funcionario.setEmViagem(true);
         RegistroViagem registroViagem = RegistroViagem.builder()
                 .veiculo(veiculo)
                 .funcionarioMotorista(funcionario)
@@ -55,6 +58,7 @@ public class RegistroViagemServico {
 
         veiculoRepositorio.save(veiculo);
         registroViagemRepositorio.save(registroViagem);
+        funcionarioRepositorio.save(funcionario);
 
         return VisualizarRegistroViagemDTO.fromEntity(registroViagem);
     }
@@ -64,9 +68,8 @@ public class RegistroViagemServico {
         Veiculo veiculo = veiculoRepositorio.findByPlaca(dto.placaVeiculo())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Veículo não encontrado com a placa: " + dto.placaVeiculo()));
 
-        if (!veiculo.getStatus().equals(VeiculoStatus.EM_VIAGEM)) {
-            throw new VeiculoJaEstaEmViagemException("Não é possível finalizar a viagem do veículo de placa " + dto.placaVeiculo() + " pois" +
-                    " o status do veículo é " + veiculo.getStatus() + ". O veículo deve estar em viagem para finalizar.");
+       for (RetornoViagemValidacao validator : validacoesDeRetornoDeRegistroViagem) {
+            validator.validate(veiculo, dto);
         }
 
         RegistroViagem registroViagem = registroViagemRepositorio.findByStatusAbertoAndByPlacaVeiculo(dto.placaVeiculo())
@@ -76,9 +79,11 @@ public class RegistroViagemServico {
         registroViagem.setDataRetorno(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
         registroViagem.setStatus(RegistroViagemStatus.FINALIZADO);
         veiculo.setStatus(VeiculoStatus.NO_PATIO);
+        registroViagem.getFuncionarioMotorista().setEmViagem(false);
 
         registroViagemRepositorio.save(registroViagem);
         veiculoRepositorio.save(veiculo);
+        funcionarioRepositorio.save(registroViagem.getFuncionarioMotorista());
 
         return VisualizarRegistroViagemDTO.fromEntity(registroViagem);
     }
@@ -87,6 +92,7 @@ public class RegistroViagemServico {
     public List<VisualizarRegistroViagemDTO> listarRegistrosViagensComFiltros() {
         List<RegistroViagem> registrosViagens = registroViagemRepositorio.findAll();
         return registrosViagens.stream()
+                .sorted((rv1, rv2) -> rv2.getCriadoEm().compareTo(rv1.getCriadoEm())) // Ordena por data de criação decrescente
                 .map(VisualizarRegistroViagemDTO::fromEntity)
                 .toList();
     }
