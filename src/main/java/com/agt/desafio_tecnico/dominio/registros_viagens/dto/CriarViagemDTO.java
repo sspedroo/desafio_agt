@@ -18,6 +18,6 @@ public record CriarViagemDTO(
         @NotBlank(message = "O destino não pode estar em branco")
         @Schema(defaultValue = "Maracai")
         String destino,
-        List<String> passageiros
+        String passageiros
 ) {
 }
