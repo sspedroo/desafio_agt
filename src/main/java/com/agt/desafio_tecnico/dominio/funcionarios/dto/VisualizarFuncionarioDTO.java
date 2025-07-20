@@ -10,6 +10,7 @@ public record VisualizarFuncionarioDTO(
         UUID id,
         String nome,
         String cnh,
+        boolean emViagem,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
         LocalDateTime criadoEm,
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
@@ -20,6 +21,7 @@ public record VisualizarFuncionarioDTO(
                 funcionario.getId(),
                 funcionario.getNome(),
                 funcionario.getCnh(),
+                funcionario.isEmViagem(),
                 funcionario.getCriadoEm(),
                 funcionario.getAtualizadoEm() == null ? null : funcionario.getAtualizadoEm()
         );
